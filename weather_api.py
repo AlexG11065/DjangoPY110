@@ -27,7 +27,7 @@ def current_weather(lat, lon):
     """
     Описание функции, входных и выходных переменных
     """
-    token = 'Ваш токен'  # Вставить ваш токен
+    token = 'ad5af5f6-da8a-4c9c-8c6a-d6c937703b58'  # Вставить ваш токен
     url = f"https://api.weather.yandex.ru/v2/forecast?lat={lat}&lon={lon}"
     headers = {"X-Yandex-API-Key": f"{token}"}
     response = requests.get(url, headers=headers)
@@ -36,12 +36,12 @@ def current_weather(lat, lon):
     result = {
         'city': data['geo_object']['locality']['name'],
         'time': datetime.fromtimestamp(data['fact']['uptime']).strftime("%H:%M"),
-        'temp': 'реализация',  # TODO Реализовать вычисление температуры из данных полученных от API
-        'feels_like_temp': 'реализация',  # TODO Реализовать вычисление ощущаемой температуры из данных полученных от API
-        'pressure': 'реализация',  # TODO Реализовать вычисление давления из данных полученных от API
-        'humidity': 'реализация',  # TODO Реализовать вычисление влажности из данных полученных от API
-        'wind_speed': 'реализация',  # TODO Реализовать вычисление скорости ветра из данных полученных от API
-        'wind_gust': 'реализация',  # TODO Реализовать вычисление скорости порывов ветка из данных полученных от API
+        'temp': data['fact']['temp'],
+        'feels_like_temp': data['fact']['feels_like'],
+        'pressure': data['fact']['pressure_mm'],
+        'humidity': data['fact']['humidity'],
+        'wind_speed': data['fact']['wind_speed'],
+        'wind_gust': data['fact']['wind_gust'],
         'wind_dir': DIRECTION_TRANSFORM.get(data['fact']['wind_dir']),
     }
     return result
