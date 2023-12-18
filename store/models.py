@@ -1,6 +1,5 @@
 from django.db import models
 
-
 DATABASE = {'1': {'name': 'Болгарский перец',
                   'discount': 30,
                   'price_before': 300.00,
