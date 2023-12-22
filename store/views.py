@@ -9,9 +9,20 @@ from logic.services import view_in_cart, add_to_cart, remove_from_cart
 
 def shop_view(request):
     if request.method == "GET":
-        with open('store/shop.html', encoding="utf-8") as f:
-            data = f.read()  # Читаем HTML файл
-        return HttpResponse(data)  # Отправляем HTML файл как ответ
+        # with open('store/shop.html', encoding="utf-8") as f:
+        #     data = f.read()  # Читаем HTML файл
+        return render(request, 'store/shop.html',
+                      context={"products": DATABASE.values()})  # Отправляем HTML файл как ответ
+
+
+"""
+Далее передадим данные о товарах в файл shop.html (для того, чтобы иметь возможность при изменении товаров в DATABASE - 
+товары автоматически менялись в магазине)
+Для этого через параметр context функции render можно передать словарь, значения которого будут использоваться для
+подставления значений в html файл.
+В нашем случае в shop_view в render пропишем следующее
+В context передаём словарь с ключом products и всеми продуктами, что есть в базе данных
+"""
 
 
 # def products_view(request):
@@ -74,9 +85,9 @@ def products_view(request):
                                           True)  # Провести фильтрацию с параметрами
             else:
                 data = filtering_category(DATABASE, category_key, ordering_key,
-                                          False)  # TODO Провести фильтрацию с параметрами
+                                          False)  #  Провести фильтрацию с параметрами
         else:
-            data = filtering_category(DATABASE, category_key)  # TODO Провести фильтрацию с параметрами
+            data = filtering_category(DATABASE, category_key)  #  Провести фильтрацию с параметрами
         # В этот раз добавляем параметр safe=False, для корректного отображения списка в JSON
         return JsonResponse(data, safe=False, json_dumps_params={'ensure_ascii': False,
                                                                  'indent': 4})
@@ -85,8 +96,18 @@ def products_view(request):
 def cart_view(request):
     if request.method == "GET":
         data = view_in_cart()  # Вызвать ответственную за это действие функцию
-        return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
-                                                     'indent': 4})
+        if request.GET.get('format') == 'JSON':
+            return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
+                                                         'indent': 4})
+        products = []  # список продуктов
+        for product_id, quantity in data['products'].items():
+            product = DATABASE.get(product_id) # 1. Получите информацию о продукте из DATABASE по его product_id. product
+            # будет словарём
+            product["quantity"] = quantity  # 2. в словарь product под ключом "quantity" запишите текущее значение товара в корзине
+            product["price_total"] = f"{quantity * product['price_after']:.2f}"  # добавление общей цены позиции с
+            # ограничением в 2 знака
+            products.append(product)   # 3. добавьте product в список products
+        return render(request, "store/cart.html", context={"products": products})
 
 
 def cart_add_view(request, id_product):
