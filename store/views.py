@@ -6,6 +6,7 @@ from .models import DATABASE
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from logic.services import filtering_category
 from logic.services import view_in_cart, add_to_cart, remove_from_cart
+from django.contrib.auth.decorators import login_required
 
 
 # def delivery_estimate_view(request):
@@ -142,6 +143,7 @@ def products_view(request):
                                                                  'indent': 4})
 
 
+@login_required(login_url='login:login_view')
 def cart_view(request):
     if request.method == "GET":
         current_user = get_user(request).username
@@ -163,6 +165,18 @@ def cart_view(request):
         return render(request, "store/cart.html", context={"products": products})
 
 
+@login_required(login_url='login:login_view')
+def cart_buy_now_view(request, id_product):
+    if request.method == "GET":
+        result = add_to_cart(request, id_product)
+        if result:
+            # return cart_view(request)
+            return redirect("store:cart_view")
+
+        return HttpResponseNotFound("Неудачное добавление в корзину")
+
+
+@login_required(login_url='login:login_view')
 def cart_add_view(request, id_product):
     if request.method == "GET":
         result = add_to_cart(request, id_product)  # Вызвать ответственную за это действие функцию
@@ -187,22 +201,12 @@ def cart_del_view(request, id_product):
                             json_dumps_params={'ensure_ascii': False})
 
 
-def cart_buy_now_view(request, id_product):
-    if request.method == "GET":
-        result = add_to_cart(request, id_product)
-        if result:
-            # return cart_view(request)
-            return redirect("store:cart_view")
-
-        return HttpResponseNotFound("Неудачное добавление в корзину")
-
-
 """Функция удаления товара по кнопке -->"""
 
 
 def cart_remove_view(request, id_product):
     if request.method == "GET":
-        result = remove_from_cart(request, id_product)    # Вызвать функцию удаления из корзины
+        result = remove_from_cart(request, id_product)  # Вызвать функцию удаления из корзины
         if result:
             return redirect("store:cart_view")  # Вернуть перенаправление на корзину
 

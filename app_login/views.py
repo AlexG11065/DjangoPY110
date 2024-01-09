@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
-from logic.services import add_to_cart, add_user_to_cart
+from logic.services import add_user_to_cart
 
 
 # def login_view(request):
@@ -29,5 +29,5 @@ def login_view(request):
 def logout_view(request):
     if request.method == "GET":
         logout(request)  # Функция разлогинивает пользователя
-        return redirect("/")  #  Верните редирект на главную страницу
+        return redirect("store:shop_view")  #  Верните редирект на главную страницу
         # return HttpResponseRedirect('/')

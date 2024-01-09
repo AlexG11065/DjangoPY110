@@ -72,10 +72,13 @@ def add_to_cart(request, id_product: str) -> bool:
         if not DATABASE.get(id_product):  # проверка есть ли такой товар в датобазе, чтобы уберечь себя от добавления
             # несуществующего товара.
             return False
-        cart['products'][id_product] = 1  # если в первые, то добовляем.
+        cart['products'][id_product] = 1
+        # если в первые, то добовляем.
     else:
-        cart['products'][id_product] += 1  # Если товар существует, то увеличиваем его количество на 1
-    with open('cart.json', mode='w', encoding='utf=8') as file:  # Не забываем записать обновленные данные cart в
+        cart['products'][id_product] += 1
+        # Если товар существует, то увеличиваем его количество на 1
+    with open('cart.json', mode='w', encoding='utf=8') as file:
+        # Не забываем записать обновленные данные cart в
         # 'cart.json'
         json.dump(cart_users, file)
     return True
