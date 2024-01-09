@@ -37,6 +37,6 @@ urlpatterns = [
     path('product/', products_view),
     path('', shop_view),
     path('', include('store.urls')),
-    path('', include('app_weather.urls')),  # маршруты приложений с помощью unclude
-
+    path('', include('app_weather.urls')),
+    path('login/', include('app_login.urls')),  # маршруты приложений с помощью unclude
 ]

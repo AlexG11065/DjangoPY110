@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# Новое приложение всегда следует зарегистрировать!!!
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'app_datatime',
     'app_weather',
     'store',
+    'app_login',
 ]
 
 MIDDLEWARE = [
